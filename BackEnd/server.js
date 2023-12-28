@@ -21,7 +21,7 @@ const normalizePort = val => {
 };
 
 // Obtention du port à partir des variables d'environnement ou utilisation du port 3000 par défaut
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '4000');
 // Configuration de l'application pour utiliser le port spécifié
 app.set('port', port);
 
