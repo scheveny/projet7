@@ -20,11 +20,6 @@ exports.createBook = (req, res, next) => {
     delete bookObject._id;
     delete bookObject.userId;
     console.log(req.file);
-    const book = new Book({
-      ...bookObject,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, 
-      userId: req.auth.userId,
-    });
 
     // Redimensionne l'image, la convertit en webp et supprime l'image originale
     sharp(req.file.path)
@@ -40,14 +35,20 @@ exports.createBook = (req, res, next) => {
                         console.error(err);
                     } else {
                         console.log('Original image deleted successfully');
+
+                        const book = new Book({
+                            ...bookObject,
+                            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}.webp`, 
+                            userId: req.auth.userId,
+                          });
+
+                          book.save()
+                          .then(() => res.status(201).json({ message: 'Livre enregistré avec succès !' })) 
+                          .catch(error => res.status(400).json({ erreur: error }));
                     }
                 });
             }
         });
-  
-    book.save()
-      .then(() => res.status(201).json({ message: 'Livre enregistré avec succès !' })) 
-      .catch(error => res.status(400).json({ erreur: error }));
   };
   
 exports.getOneBook = (req, res, next) => {
